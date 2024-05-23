@@ -34,22 +34,12 @@ class DragDropCollectionVC :UIViewController, UICollectionViewDataSource, UIColl
         view.backgroundColor = .lightGray
         setupCollectionView()
         loadDataList()
-        observeAppLifecycle()
     }
 
     
  
     
-    private func observeAppLifecycle() {
-        NotificationCenter.default.addObserver(self, selector: #selector(appWillTerminate), name: UIApplication.willTerminateNotification, object: nil)
-   
-    }
-    
-    @objc private func appWillTerminate() {
-        saveDataList()
-    }
-    
-
+    //MARK: Save object data
     func saveDataList() {
         let encodedData = try? JSONEncoder().encode(dataList)
         UserDefaults.standard.set(encodedData, forKey: "DataListKey")
@@ -186,6 +176,8 @@ extension DragDropCollectionVC{
             }
         }
         
+        
+        saveDataList()
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.prepare()
         generator.impactOccurred()
