@@ -6,27 +6,24 @@
 //
 
 import UIKit
-enum MenuTitle: String{
-    case wallet = "Wallet"
-    case reward = "Reward"
-    case fun = "Fun"
-    case offer = "Special Offer"
-    case events = "Events"
-    case charity = "Charity"
-    case none = "none"
-}
 
 class DragDropCollectionVC :UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDragDelegate, UICollectionViewDropDelegate {
     
     static let  cell = "MenuListDragDropCell"
-            var didSelectItemsCell : ((_ : MenuTitle)->())?
+            var didSelectItemsCell : ((_ : MenuListModel)->())?
     var collectionView : UICollectionView!
     
-    var  dataList : [TitleImageModel] = [] {
+    var  dataList : [MenuListModel] = [] {
         didSet{
             collectionView.reloadData()
         }
     }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+            super.touchesEnded(touches, with: event)
+            
+            print("Touch ended")
+        }
     
     
     override func viewDidLoad() {
@@ -37,30 +34,25 @@ class DragDropCollectionVC :UIViewController, UICollectionViewDataSource, UIColl
     }
 
     
- 
-    
-    //MARK: Save object data
-    func saveDataList() {
-        let encodedData = try? JSONEncoder().encode(dataList)
-        UserDefaults.standard.set(encodedData, forKey: "DataListKey")
-    }
-    
-    
     //MARK: Set default date and fetching data
     func loadDataList() {
-        if let encodedData = UserDefaults.standard.data(forKey: "DataListKey"),
-           let savedDataList = try? JSONDecoder().decode([TitleImageModel].self, from: encodedData) {
-            dataList = savedDataList
-        } else {
+        
+        let dateMenu =  DataManager.shared.getDragDropMenu() ?? []
+        if  dateMenu.count > 0  {
+            dataList = dateMenu
+        }else{
+            
             // Set default dataList if no saved data is found
             dataList = [
-                TitleImageModel(image: .icWalletManu, title: MenuTitle.wallet.rawValue),
-                TitleImageModel(image: .icRewardManu, title: MenuTitle.reward.rawValue),
-                TitleImageModel(image: .icFunManu, title: MenuTitle.fun.rawValue),
-                TitleImageModel(image: .icOfferManu, title: MenuTitle.offer.rawValue),
-                TitleImageModel(image: .icEventManu, title: MenuTitle.events.rawValue),
-                TitleImageModel(image: .icCharityManu, title: MenuTitle.charity.rawValue)
+                MenuListModel(imageName: "", title: "Titem 1", id: 1),
+                MenuListModel(imageName: "", title: "Titem 2", id: 2),
+                MenuListModel(imageName: "", title: "Titem 3",  id: 3),
+                MenuListModel(imageName: "", title: "Titem 4", id: 4),
+                MenuListModel(imageName: "", title: "Titem 5", id: 5),
+                MenuListModel(imageName: "", title: "Titem 6", id: 6)
             ]
+            
+            DataManager.shared.saveDragDropMenu(data: dataList)
         }
     }
 }
@@ -90,17 +82,9 @@ extension DragDropCollectionVC{
         
         view.addSubview(collectionView)
         
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: -10),
-            collectionView.leadingAnchor.constraint(equalTo:  view.leadingAnchor,constant: 0),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: 0),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            collectionView.heightAnchor.constraint(equalToConstant: CGFloat((size*2) + 35)),
-        ])
+        collectionView.frame = view.bounds
+ 
     }
-    
-    
     
     // MARK: - UICollectionViewDataSource
     
@@ -111,8 +95,9 @@ extension DragDropCollectionVC{
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CellIdentifier", for: indexPath) as! MenuDragDropCell
         let titleImageModel = dataList[indexPath.item]
-        cell.imgIcone.image = titleImageModel.image
+        cell.imgIcone.image =  UIImage(named: titleImageModel.imageName)
         cell.titleLabel.text = titleImageModel.title
+     
         return cell
     }
     
@@ -150,7 +135,7 @@ extension DragDropCollectionVC{
         
         for item in coordinator.items {
             if let sourceIndexPath = item.sourceIndexPath,
-               let cell = item.dragItem.localObject as? MenuDragDropCell {
+               let _ = item.dragItem.localObject as? MenuDragDropCell {
                 collectionView.performBatchUpdates({
                     let movedItem = dataList.remove(at: sourceIndexPath.item)
                     dataList.insert(movedItem, at: destinationIndexPath.item)
@@ -166,7 +151,7 @@ extension DragDropCollectionVC{
                     if let draggedItem = object as? NSString {
                         DispatchQueue.main.async {
                             placeholderContext.commitInsertion(dataSourceUpdates: { insertionIndexPath in
-                                let titleImageModel = TitleImageModel(image: .icFunManu, title: draggedItem as String)
+                                let titleImageModel = MenuListModel(imageName: "", title: draggedItem as String, id: 1)
                                 self.dataList.insert(titleImageModel, at: insertionIndexPath.item)
                                 collectionView.insertItems(at: [insertionIndexPath])
                             })
@@ -177,7 +162,7 @@ extension DragDropCollectionVC{
         }
         
         
-        saveDataList()
+        DataManager.shared.saveDragDropMenu(data: dataList)
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.prepare()
         generator.impactOccurred()
@@ -189,42 +174,18 @@ extension DragDropCollectionVC{
         
         print(indexPath.row)
         
-        let selectedItem = dataList[indexPath.item].title
+        let selectedItem = dataList[indexPath.item]
         print("selectedItem: \(selectedItem)")
         
-        didSelectItemsCell?(MenuTitle(rawValue: selectedItem) ?? MenuTitle.none)
+//        didSelectItemsCell?(MenuTitle(rawValue: selectedItem) ?? MenuTitle.none)
     }
 }
 
 
 
-struct TitleImageModel: Codable {
-    let imageData: Data
+struct MenuListModel: Codable {
+    let imageName: String
     let title: String
-    
-    var image: UIImage? {
-        return UIImage(data: imageData)
-    }
-    
-    init(image: UIImage, title: String) {
-        self.imageData = image.pngData() ?? Data()
-        self.title = title
-    }
-    
-    private enum CodingKeys: String, CodingKey {
-        case imageData
-        case title
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        imageData = try container.decode(Data.self, forKey: .imageData)
-        title = try container.decode(String.self, forKey: .title)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(imageData, forKey: .imageData)
-        try container.encode(title, forKey: .title)
-    }
+    let id: Int
 }
+

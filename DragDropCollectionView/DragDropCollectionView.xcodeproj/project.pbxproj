@@ -14,6 +14,7 @@
 		FA69E7582BE9CD4400501CA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA69E7572BE9CD4400501CA3 /* Assets.xcassets */; };
 		FA69E75B2BE9CD4400501CA3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA69E7592BE9CD4400501CA3 /* LaunchScreen.storyboard */; };
 		FA69E7652BE9CF9100501CA3 /* MenuDragDropCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA69E7642BE9CF9100501CA3 /* MenuDragDropCell.swift */; };
+		FA856FBE2CE2467000E59854 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA856FBD2CE2467000E59854 /* DataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		FA69E75A2BE9CD4400501CA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA69E75C2BE9CD4500501CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA69E7642BE9CF9100501CA3 /* MenuDragDropCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDragDropCell.swift; sourceTree = "<group>"; };
+		FA856FBD2CE2467000E59854 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 		FA69E74D2BE9CD3D00501CA3 /* DragDropCollectionView */ = {
 			isa = PBXGroup;
 			children = (
+				FA856FBC2CE2465500E59854 /* Utilities */,
 				FA69E7622BE9CD5100501CA3 /* App */,
 				FA69E7632BE9CDD400501CA3 /* Screen */,
 				FA69E7542BE9CD3D00501CA3 /* Main.storyboard */,
@@ -84,6 +87,14 @@
 				FA69E7642BE9CF9100501CA3 /* MenuDragDropCell.swift */,
 			);
 			path = Screen;
+			sourceTree = "<group>";
+		};
+		FA856FBC2CE2465500E59854 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FA856FBD2CE2467000E59854 /* DataManager.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -158,6 +169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA69E7532BE9CD3D00501CA3 /* DragDropCollectionVC.swift in Sources */,
+				FA856FBE2CE2467000E59854 /* DataManager.swift in Sources */,
 				FA69E7652BE9CF9100501CA3 /* MenuDragDropCell.swift in Sources */,
 				FA69E74F2BE9CD3D00501CA3 /* AppDelegate.swift in Sources */,
 				FA69E7512BE9CD3D00501CA3 /* SceneDelegate.swift in Sources */,
